@@ -47,7 +47,7 @@ Funcionalidades expostas:
 | PATCH | `/api/v1/tasks/{id}/toggle` | Alterna status concluída/pendente | JWT |
 | DELETE | `/api/v1/tasks/{id}` | Remove tarefa | JWT |
 
-Documentação interativa: <http://localhost:8080/swagger-ui/index.html>
+Documentação interativa: <http://localhost:8080/doc/tasklist/v1/swagger-ui/index.html>
 
 ## Helper
 

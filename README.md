@@ -65,7 +65,7 @@ Ou via `.jar` gerado:
 java -jar build/libs/jtech-tasklist-*.jar
 ```
 
-API em <http://localhost:8080> · Swagger UI em <http://localhost:8080/swagger-ui/index.html>.
+API em <http://localhost:8080> · Swagger UI em <http://localhost:8080/doc/tasklist/v1/swagger-ui/index.html>
 
 O **Liquibase** executa as migrações automaticamente no primeiro start.
 
@@ -104,6 +104,7 @@ npm run dev
 ```
 
 Disponível em <http://localhost:5173>.
+
 
 #### 2.4. Build de produção
 
