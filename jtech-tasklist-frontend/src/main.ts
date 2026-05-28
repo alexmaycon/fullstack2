@@ -7,10 +7,22 @@ import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
 
-const app = createApp(App)
+async function bootstrap() {
+  if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCK === 'true') {
+    const { worker } = await import('./mocks/browser')
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+      serviceWorker: { url: '/mockServiceWorker.js' },
+    })
+  }
 
-app.use(createPinia())
-app.use(router)
-app.use(vuetify)
+  const app = createApp(App)
 
-app.mount('#app')
+  app.use(createPinia())
+  app.use(router)
+  app.use(vuetify)
+
+  app.mount('#app')
+}
+
+bootstrap()
