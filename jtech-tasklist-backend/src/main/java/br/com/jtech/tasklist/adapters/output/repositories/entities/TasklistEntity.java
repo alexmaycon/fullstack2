@@ -1,43 +1,50 @@
-/*
-*  @(#)TasklistEntity.java
-*
-*  Copyright (c) J-Tech Solucoes em Informatica.
-*  All Rights Reserved.
-*
-*  This software is the confidential and proprietary information of J-Tech.
-*  ("Confidential Information"). You shall not disclose such Confidential
-*  Information and shall use it only in accordance with the terms of the
-*  license agreement you entered into with J-Tech.
-*
-*/
 package br.com.jtech.tasklist.adapters.output.repositories.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
-/**
-* class TasklistEntity 
-* 
-* @author angelo.vicente
-*/
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "TasklistEntity")
-public class TasklistEntity {
+@Entity
+@Table(name = "task_lists", uniqueConstraints = @UniqueConstraint(name = "uk_task_lists_user_name", columnNames = {"user_id", "name"}))
+public class TaskListEntity implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    //Others parameters...
+    @Column(name = "name", nullable = false, length = 120)
+    private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @jakarta.persistence.ForeignKey(name = "fk_task_lists_user"))
+    private UserEntity user;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
 }
