@@ -1,36 +1,30 @@
-/*
-*  @(#)TasklistUseCase.java
-*
-*  Copyright (c) J-Tech Solucoes em Informatica.
-*  All Rights Reserved.
-*
-*  This software is the confidential and proprietary information of J-Tech.
-*  ("Confidential Information"). You shall not disclose such Confidential
-*  Information and shall use it only in accordance with the terms of the
-*  license agreement you entered into with J-Tech.
-*
-*/
 package br.com.jtech.tasklist.application.core.usecases;
 
+import br.com.jtech.tasklist.application.core.domains.TaskList;
+import br.com.jtech.tasklist.application.ports.input.CreateTaskListInputGateway;
+import br.com.jtech.tasklist.application.ports.output.TaskListPersistenceOutputGateway;
+import br.com.jtech.tasklist.config.infra.exceptions.ConflictException;
 
-import br.com.jtech.tasklist.application.core.domains.Tasklist;
-import br.com.jtech.tasklist.application.ports.input.CreateTasklistInputGateway;
-import br.com.jtech.tasklist.application.ports.output.CreateTasklistOutputGateway;
+import java.util.UUID;
 
-/**
-* class TasklistUseCase  
-* 
-* user angelo.vicente  
-*/
-public class CreateTasklistUseCase implements CreateTasklistInputGateway {
+public class CreateTaskListUseCase implements CreateTaskListInputGateway {
 
-    private final CreateTasklistOutputGateway createTasklistOutputGateway;
+    private final TaskListPersistenceOutputGateway taskListPersistence;
 
-    public CreateTasklistUseCase(CreateTasklistOutputGateway createTasklistOutputGateway) {
-        this.createTasklistOutputGateway = createTasklistOutputGateway;
-     }
+    public CreateTaskListUseCase(TaskListPersistenceOutputGateway taskListPersistence) {
+        this.taskListPersistence = taskListPersistence;
+    }
 
-    public Tasklist create(Tasklist tasklist) {
-        return createTasklistOutputGateway.create(tasklist);
-     }
- }
+    @Override
+    public TaskList create(UUID userId, String name) {
+        String trimmed = name.trim();
+        if (taskListPersistence.existsByUserIdAndName(userId, trimmed)) {
+            throw new ConflictException("Já existe uma lista com este nome");
+        }
+        TaskList taskList = TaskList.builder()
+                .name(trimmed)
+                .userId(userId)
+                .build();
+        return taskListPersistence.save(userId, taskList);
+    }
+}

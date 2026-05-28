@@ -1,59 +1,40 @@
-/*
-*  @(#)Tasklist.java
-*
-*  Copyright (c) J-Tech Solucoes em Informatica.
-*  All Rights Reserved.
-*
-*  This software is the confidential and proprietary information of J-Tech.
-*  ("Confidential Information"). You shall not disclose such Confidential
-*  Information and shall use it only in accordance with the terms of the
-*  license agreement you entered into with J-Tech.
-*
-*/
 package br.com.jtech.tasklist.application.core.domains;
 
-import br.com.jtech.tasklist.adapters.input.protocols.TasklistRequest;
-import br.com.jtech.tasklist.adapters.output.repositories.entities.TasklistEntity;
-import lombok.*;
+import br.com.jtech.tasklist.adapters.output.repositories.entities.TaskListEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
-import java.util.List;
 
-
-/**
-* class Tasklist 
-* 
-* user angelo.vicente 
-*/
 @Getter
 @Setter
 @Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tasklist {
+public class TaskList {
 
-    private String id;
+    private UUID id;
+    private String name;
+    private UUID userId;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 
-    public static List<Tasklist> of(List<TasklistEntity> entities) {
-        return entities.stream().map(Tasklist::of).toList();
-     }
-
-    public TasklistEntity toEntity() {
-        return TasklistEntity.builder()
-            .id(UUID.fromString(getId()))
-            .build();
-     }
-
-    public static Tasklist of(TasklistEntity entity) {
-        return Tasklist.builder()
-            .id(entity.getId().toString())
-            .build();
-     }
-
-    public static Tasklist of(TasklistRequest request) {
-        return Tasklist.builder()
-            .id(request.getId())
-            .build();
-     }
- }
+    public static TaskList of(TaskListEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        return TaskList.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .userId(entity.getUser() != null ? entity.getUser().getId() : null)
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
+    }
+}
